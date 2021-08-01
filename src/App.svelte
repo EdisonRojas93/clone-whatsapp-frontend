@@ -1,6 +1,7 @@
 <script>
 	import SHeader from "./components/siderbar/Header.svelte";
 	import Search from "./components/siderbar/Search.svelte";
+	import Chat from "./components/siderbar/Chat.svelte";
 </script>
 
 <div class="container">
@@ -8,6 +9,22 @@
 		<section class="sidebar">
 			<SHeader />
 			<Search />
+			
+			<section class="chats">
+				<Chat typing="true"/>
+				<Chat />
+				<Chat />
+				<Chat />
+				<Chat />
+				<Chat />
+				<Chat />
+				<Chat />
+				<Chat />
+				<Chat />
+				<Chat />
+				<Chat />
+				<Chat />
+			</section>
 		</section>
 		<section class="message">aqui va los mensajes</section>
 	</div>
@@ -50,11 +67,21 @@
 		width: 100%;
 		height: 100%;
 		box-shadow: 1px 0px 1px rgba(0, 0, 0, 0.2);
+		overflow: hidden;
+	}
+
+	.chats{
+		display: block;
+		position: relative;
+		overflow: auto;
+		height: 100%;
 	}
 
 	.message {
 		width: 100%;
 	}
+
+
 
 	@media (prefers-color-scheme: dark) {
 		.container {
