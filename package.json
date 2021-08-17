@@ -13,6 +13,7 @@
     "vite": "^2.4.4"
   },
   "dependencies": {
-    "@mdi/js": "^5.9.55"
+    "@mdi/js": "^5.9.55",
+    "socket.io-client": "^4.1.3"
   }
 }

@@ -1,7 +1,45 @@
-<script>
+<script lang="javascript">
+	import { onMount } from "svelte";
+	import { io } from "socket.io-client";
+
 	import SHeader from "./components/siderbar/Header.svelte";
 	import Search from "./components/siderbar/Search.svelte";
 	import Chat from "./components/siderbar/Chat.svelte";
+
+	let socket;
+	let myRoom;
+	let elmRef;
+	let msg;
+	let sendToRoom;
+
+	const userUuid = "3a702eff-2a20-4415-9c05-cb96308a368c";
+
+	onMount(() => {
+		socket = io("ws://localhost:3001/chat", { autoConnect: false });
+
+		socket.on("connect", function () {
+			socket.emit("create", { room: myRoom })
+		});
+
+		socket.on("wellcome", (msg) => console.log(msg));
+		socket.on("disconnect", (msg) => console.log(msg));
+		socket.on("msg from", msg => console.log(msg))
+	});
+
+	const handlerDisconnect = () => {
+		socket.disconnect();
+	};
+
+	const handlerConnect = () => {
+		myRoom = elmRef.value;
+		socket.connect();
+	};
+
+	const sendMessage = () => {
+		socket.emit("msg to",{room: sendToRoom, msg});
+		msg = "";
+		sendToRoom = "";
+	};
 </script>
 
 <div class="container">
@@ -9,9 +47,10 @@
 		<section class="sidebar">
 			<SHeader />
 			<Search />
-			
+			<button on:click={handlerDisconnect}> disconnnect</button>
+
 			<section class="chats">
-				<Chat typing="true"/>
+				<Chat typing="true" />
 				<Chat />
 				<Chat />
 				<Chat />
@@ -26,7 +65,23 @@
 				<Chat />
 			</section>
 		</section>
-		<section class="message">aqui va los mensajes</section>
+		<section class="message">
+			{#if myRoom}
+
+			  <h2>I am {myRoom}</h2>
+
+				<label for="">
+					Enviar a:
+					<input type="text" bind:value={sendToRoom} />
+				</label>
+				<textarea bind:value={msg} />
+				<input type="button" value="enviar" on:click={sendMessage} />
+
+			{:else}
+				<input type="text" bind:this={elmRef} />
+				<input type="button" value="login" on:click={handlerConnect} />
+			{/if}
+		</section>
 	</div>
 </div>
 
@@ -70,7 +125,7 @@
 		overflow: hidden;
 	}
 
-	.chats{
+	.chats {
 		display: block;
 		position: relative;
 		overflow: auto;
@@ -79,9 +134,8 @@
 
 	.message {
 		width: 100%;
+		padding: 1rem;
 	}
-
-
 
 	@media (prefers-color-scheme: dark) {
 		.container {
